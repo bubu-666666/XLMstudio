@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>密码</title>
+<script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui, sans-serif}
+body{
+    background:#ffffff;
+    color:#333;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.card{
+    background:#fff;
+    padding:32px;
+    width:100%;
+    max-width:420px;
+}
+h2{
+    text-align:center;
+    margin-bottom:24px;
+    color:#222;
+}
+input{
+    width:100%;
+    padding:13px 15px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    font-size:16px;
+    margin-bottom:14px;
+}
+button{
+    width:100%;
+    padding:13px 20px;
+    border:none;
+    border-radius:8px;
+    background:#2563eb;
+    color:#fff;
+    cursor:pointer;
+    font-size:16px;
+}
+button:hover{
+    background:#1d4ed8;
+}
+.tip{
+    margin:12px 0;
+    text-align:center;
+    color:#dc2626;
+}
+.ok{
+    color:#16a34a;
+}
+#downloadPanel{
+    display:none;
+    margin-top:24px;
+    padding-top:20px;
+    border-top:1px solid #eee;
+    text-align:center;
+}
+.dlBtn{
+    background:#16a34a;
+    margin-top:12px;
+}
+.dlBtn:hover{
+    background:#15803d;
+}
+</style>
+</head>
+<body>
+<div class="card">
+    <h2>验证</h2>
+    <input type="text" id="userInput" placeholder="请输入用户名">
+    <input type="password" id="pwdInput" placeholder="请输入密码">
+    <button onclick="checkPass()">验证</button>
+    <div id="msg" class="tip"></div>
+    <div id="downloadPanel">
+        <p>验证成功</p>
+        <button class="dlBtn" onclick="downloadTxt()">下载 测试.txt</button>
+    </div>
+</div>
+
+<script>
+const USER_CORRECT_HASH = "cb893729feffa2b3466c495a026437da75280d14f023d7ef5ed6a9dcc9d5e578";
+const PASS_CORRECT_HASH = "1c2ed8f15ab1ddd765d1cddfdce7e71c7c9ec4e71eead0b350d6b5206f366ec8";
+
+const msgEl = document.getElementById("msg");
+const downloadPanel = document.getElementById("downloadPanel");
+
+function sha256(s){
+    return CryptoJS.SHA256(s).toString();
+}
+
+function checkPass(){
+    const user = document.getElementById("userInput").value.trim();
+    const pwd = document.getElementById("pwdInput").value.trim();
+    const userHash = sha256(user);
+    const pwdHash = sha256(pwd);
+
+    if(userHash === USER_CORRECT_HASH && pwdHash === PASS_CORRECT_HASH){
+        msgEl.textContent = "密码正确";
+        msgEl.className = "ok tip";
+        downloadPanel.style.display = "block";
+    }else{
+        msgEl.textContent = "用户名或密码错误";
+        msgEl.className = "tip";
+        downloadPanel.style.display = "none";
+    }
+}
+
+function downloadTxt(){
+    const content = "";
+    const blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "测试.py";
+    a.click();
+    URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
